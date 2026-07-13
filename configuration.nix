@@ -20,7 +20,10 @@
   networking.networkmanager.enable = false;
   networking.hostName = "archongrid";
   systemd.network.enable = true;
-  networking.useDHCP = true;
+  networking.useNetworkd = true;
+  # networking.useDHCP = true;
+  #services.resolved.enable = false;
+  #networking.nameservers = [ "127.0.0.1" ];
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
@@ -64,9 +67,13 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.vro = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKgl6tQV9fnfRgzKxqn8tMMT3SooLWEhf6N2X3BFGz3" ];
+    extraGroups = [
+      "wheel"
+    ]; # Enable ‘sudo’ for the user.
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKgl6tQV9fnfRgzKxqn8tMMT3SooLWEhf6N2X3BFGz3" "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJzqsEI3+A7HV9WxIhLiZUeSeTHLa9WKg7WLcGRpAt6g" ];
   };
+
+  security.sudo.wheelNeedsPassword = false;
 
   # programs.firefox.enable = true;
 

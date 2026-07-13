@@ -6,8 +6,9 @@
     nixosConfigurations.archongrid = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        ./configuration.nix
         ./hardware-configuration.nix
+        ./configuration.nix
+        ./services.nix
       ];
     };
   };
