@@ -1,0 +1,6 @@
+{
+  imports = [
+    ./services/jellyfin.nix
+    
+  ];
+}
