@@ -1,7 +1,7 @@
 { config, lib, pkgs, inputs, ... }:
 
 {
-  imports = [ ../modules ];
+  imports = [  ];
 
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
