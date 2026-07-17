@@ -3,6 +3,8 @@
   imports = [
     ./base.nix
     ../services/tailscale.nix
+    ../services/adguardhome.nix
+    ../services/nextcloud.nix
     ];
 
   # Disable HTML Docs while leaving man intact

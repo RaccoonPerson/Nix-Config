@@ -3,23 +3,21 @@
   ## Nextcloud
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud33;          # REQUIRED: pin major version explicitly
+    package = pkgs.nextcloud33;
     hostName = "cloud.archongrid.xyz";
-    https = true;                         # generate https URLs (TLS terminates at Caddy)
+    https = true;
 
-    datadir = "/data/nextcloud";          # user files on the HDD
+    datadir = "/data/nextcloud";
 
-    database.createLocally = true;        # provisions postgres + db + user
+    database.createLocally = true;
     config = {
       dbtype = "pgsql";
       adminuser = "admin";
-      adminpassFile = "/srv/nextcloud/admin-pass";   # file, not a string in the repo
+      adminpassFile = "/srv/nextcloud/admin-pass";
     };
 
-    # redis for locking/caching — the module wires php to it
     configureRedis = true;
 
-    # php tuning — defaults are conservative
     maxUploadSize = "64G";
     phpOptions = {
       "opcache.interned_strings_buffer" = "32";
@@ -33,27 +31,26 @@
       "pm.max_spare_servers" = "24";
     };
 
-    # settings that land in config.php
     settings = {
       default_phone_region = "US";
-      maintenance_window_start = 10;      # 2am pacific in UTC; background jobs window
+      maintenance_window_start = 10; # 2am pacific
       log_type = "file";
       trusted_proxies = [ "127.0.0.1" ];
       overwriteprotocol = "https";
     };
 
-    # declarative app management (optional but very set-and-forget)
+    # app management
     extraApps = {
       inherit (config.services.nextcloud.package.packages.apps)
         contacts calendar tasks notes;
       eurooffice = pkgs.fetchNextcloudApp {
         url = "https://github.com/nextcloud-releases/eurooffice/releases/download/v11.0.0/eurooffice-v11.0.0.tar.gz";
-        sha256 = "sha256-Vsv5rtVXUchgXSSNbJVJ9Idfnvc9RaROuWxrG5L2/Ro=";        # leave empty, rebuild once, paste the hash from the error
+        sha256 = "sha256-Vsv5rtVXUchgXSSNbJVJ9Idfnvc9RaROuWxrG5L2/Ro=";
         license = "agpl3Only";
       };
     };
     extraAppsEnable = true;
-    appstoreEnable = false;               # apps come from the flake only; no drift
+    appstoreEnable = false;
   };
 
   # the module sets up nginx on localhost; front it with Caddy
@@ -64,29 +61,30 @@
   systemd.services.nextcloud-setup.unitConfig.RequiresMountsFor = [ "/data/nextcloud" ];
   
   systemd.tmpfiles.rules = [
-    "d /data/nextcloud 0750 nextcloud nextcloud -"
-    "d /srv/nextcloud  0750 root root -"
-    "d /srv/eurooffice 0750 root root -"
+    "d /data/nextcloud        0750 nextcloud nextcloud -"
+    "d /srv/nextcloud         0750 root root -"
+    "d /srv/eurooffice        0750 root root -"
+    "d /srv/eurooffice/data   0750 root root -"
+    "d /srv/eurooffice/config 0750 root root -"
+    "d /srv/eurooffice/logs   0750 root root -"
+    "d /srv/eurooffice/data   0750 105 107 -"
   ];
 
 
   ## EuroOffice
   virtualisation.oci-containers.containers = {
     eurooffice = {
-      image = "ghcr.io/euro-office/documentserver:9.3.2";
+      image = "ghcr.io/euro-office/documentserver:v9.3.1@sha256:68a2659691ba233765e08eb4f8a0439992a8df213bb5c0999efb7db16c7b4c13";
       environment = {
         JWT_ENABLED = "true";
       };
       environmentFiles = [ "/srv/eurooffice/secrets.env" ];
       volumes = [
         "/srv/eurooffice/data:/var/lib/euro-office/documentserver"
-        "/srv/eurooffice/config:/etc/euro-office/documentserver"
-        "/srv/eurooffice/logs:/var/log/euro-office/documentserver"
       ];
       ports = [ "127.0.0.1:9980:80" ];
     };
   };
-
 
   ## Caddy
   services.caddy.virtualHosts = {

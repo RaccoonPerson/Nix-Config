@@ -8,9 +8,9 @@
   home.packages = with pkgs; [
     nixd
     nixfmt-rfc-style
-    statix      # lint / dead-code
-    nix-output-monitor  # `nom build` — readable build output
-    nvd                 # diff two system generations
+    statix
+    nix-output-monitor  # nom build
+    nvd           
   ];
 
   nix.settings = {
@@ -19,20 +19,20 @@
 
   programs.direnv = {
     enable = true;
-    nix-direnv.enable = true;   # cached, doesn't re-eval on every cd
+    nix-direnv.enable = true;
   };
 
   programs.ssh = {
     enable = true;
     matchBlocks = {
       archongrid = {
-        hostname = "10.0.0.2";       # wg ip
+        hostname = "10.0.0.2";
         user = "racc";
       };
       vps = {
         hostname = "203.0.113.7";
         user = "racc";
-        port = 22;                   # or your moved port
+        port = 22;
       };
     };
   };
