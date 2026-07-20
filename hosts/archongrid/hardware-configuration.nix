@@ -49,7 +49,7 @@
       options = [ "subvol=@srv-snapshots" ];
     };
 
-  fileSystems."/srv/scratch" =
+  fileSystems."/scratch" =
     { device = "/dev/disk/by-uuid/622b33b1-a7b1-4e9c-966a-32bd5e3b26c0";
       fsType = "btrfs";
       options = [ "subvol=@scratch" ];

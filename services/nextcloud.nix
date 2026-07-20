@@ -3,9 +3,11 @@
   ## Nextcloud
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud33;
+    package = pkgs.nextcloud34;
     hostName = "cloud.archongrid.xyz";
     https = true;
+
+    fastcgiTimeout = 3600;
 
     datadir = "/data/nextcloud";
 
@@ -18,10 +20,13 @@
 
     configureRedis = true;
 
-    maxUploadSize = "64G";
+    maxUploadSize = "16G";
     phpOptions = {
+      post_max_time = "16G";
       "opcache.interned_strings_buffer" = "32";
       "memory_limit" = lib.mkForce "1G";
+      max_input_time = "3600";
+      max_execution_time = "3600";
     };
     poolSettings = {
       pm = "dynamic";
@@ -37,12 +42,13 @@
       log_type = "file";
       trusted_proxies = [ "127.0.0.1" ];
       overwriteprotocol = "https";
+      allow_local_remote_servers = true;
     };
 
     # app management
     extraApps = {
-      inherit (config.services.nextcloud.package.packages.apps)
-        contacts calendar tasks notes;
+      # inherit (config.services.nextcloud.package.packages.apps)
+      #   contacts tasks notes;
       eurooffice = pkgs.fetchNextcloudApp {
         url = "https://github.com/nextcloud-releases/eurooffice/releases/download/v11.0.0/eurooffice-v11.0.0.tar.gz";
         sha256 = "sha256-Vsv5rtVXUchgXSSNbJVJ9Idfnvc9RaROuWxrG5L2/Ro=";
@@ -50,10 +56,10 @@
       };
     };
     extraAppsEnable = true;
-    appstoreEnable = false;
+    appstoreEnable = true;
   };
 
-  # the module sets up nginx on localhost; front it with Caddy
+  # fronted with caddy
   services.nginx.virtualHosts."cloud.archongrid.xyz".listen = [
     { addr = "127.0.0.1"; port = 8081; }
   ];
@@ -64,7 +70,6 @@
     "d /data/nextcloud        0750 nextcloud nextcloud -"
     "d /srv/nextcloud         0750 root root -"
     "d /srv/eurooffice        0750 root root -"
-    "d /srv/eurooffice/data   0750 root root -"
     "d /srv/eurooffice/config 0750 root root -"
     "d /srv/eurooffice/logs   0750 root root -"
     "d /srv/eurooffice/data   0750 105 107 -"

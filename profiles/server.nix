@@ -5,6 +5,9 @@
     ../services/tailscale.nix
     ../services/adguardhome.nix
     ../services/nextcloud.nix
+    ../services/jellyfin.nix
+    ../services/servarr.nix
+    ../services/downloaders.nix
     ];
 
   # Disable HTML Docs while leaving man intact
@@ -18,6 +21,7 @@
   ## Networking
   networking.useNetworkd = true;
   networking.useDHCP = false;
+  networking.hosts."192.168.1.217" = [ "arhchongrid.xyz" "auth.archongrid.xyz" "cloud.archongrid.xyz" "jellyfin.archongrid.xyz" "adguard.archongrid.xyz" ];
   systemd.network = {
   enable = true;
   networks."10-lan" = {
