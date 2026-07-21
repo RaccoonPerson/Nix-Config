@@ -6,8 +6,8 @@
     ../services/adguardhome.nix
     ../services/nextcloud.nix
     ../services/jellyfin.nix
-    ../services/servarr.nix
-    ../services/downloaders.nix
+    # ../services/servarr.nix
+    # ../services/downloaders.nix
     ];
 
   # Disable HTML Docs while leaving man intact
